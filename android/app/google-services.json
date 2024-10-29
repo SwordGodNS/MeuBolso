@@ -1,0 +1,29 @@
+{
+  "project_info": {
+    "project_number": "243316452690",
+    "project_id": "meub-c84ab",
+    "storage_bucket": "meub-c84ab.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:243316452690:android:44572b9b66d7ee4b455e8b",
+        "android_client_info": {
+          "package_name": "com.example.meubolso"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyB2Fv14oteLpU_n-XiFl1sRZxpRkg6iNYo"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
