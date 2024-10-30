@@ -1,5 +1,4 @@
 import 'package:flutter/material.dart';
-import 'package:firebase_auth/firebase_auth.dart';
 
 class RegisterScreen extends StatefulWidget {
   const RegisterScreen({Key? key}) : super(key: key);
@@ -9,62 +8,31 @@ class RegisterScreen extends StatefulWidget {
 }
 
 class _RegisterScreenState extends State<RegisterScreen> {
-  final _auth = FirebaseAuth.instance;
-  String nome = '';
+  String name = '';
   String email = '';
-  String senha = '';
-  String confirmarSenha = '';
-
+  String password = '';
+  String confirmPassword = '';
   bool isLoading = false;
-  bool isSuccess = false;
 
-  Future<void> registrar() async {
-    setState(() {
-      isLoading = true;
-      isSuccess = false;
-    });
-
-    if (senha == confirmarSenha) {
-      try {
-        print("Tentando registrar o usuário...");
-        UserCredential userCredential = await _auth.createUserWithEmailAndPassword(
-          email: email,
-          password: senha,
-        );
-
-        if (userCredential.user != null) {
-          setState(() {
-            isLoading = false;
-            isSuccess = true;
-          });
-
-          Navigator.of(context).pushNamedAndRemoveUntil('/intro', (Route<dynamic> route) => false);
-        } else {
-          throw Exception("Registro falhou, nenhum usuário retornado.");
-        }
-      } on FirebaseAuthException catch (e) {
-        print('Erro específico de FirebaseAuth: ${e.message}');
-        ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(content: Text('Erro ao registrar: ${e.message}')),
-        );
-      } catch (e) {
-        print('Erro específico: $e');
-        ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(content: Text('Erro ao registrar: ${e.toString()}')),
-        );
-      } finally {
-        setState(() {
-          isLoading = false;
-        });
-      }
-    } else {
+  Future<void> register() async {
+    if (password != confirmPassword) {
       ScaffoldMessenger.of(context).showSnackBar(
         const SnackBar(content: Text('As senhas não coincidem')),
       );
-      setState(() {
-        isLoading = false;
-      });
+      return;
     }
+
+    setState(() {
+      isLoading = true;
+    });
+
+    await Future.delayed(const Duration(seconds: 2));
+
+    setState(() {
+      isLoading = false;
+    });
+
+    Navigator.pushNamedAndRemoveUntil(context, '/intro', (route) => false);
   }
 
   @override
@@ -78,7 +46,6 @@ class _RegisterScreenState extends State<RegisterScreen> {
         ),
         backgroundColor: Colors.white,
         elevation: 0,
-        toolbarHeight: 40,
       ),
       body: SingleChildScrollView(
         padding: const EdgeInsets.symmetric(horizontal: 24.0, vertical: 16.0),
@@ -100,40 +67,32 @@ class _RegisterScreenState extends State<RegisterScreen> {
                   const SizedBox(height: 16),
                   const Text(
                     'Cadastro',
-                    style: TextStyle(
-                      fontSize: 30,
-                      fontWeight: FontWeight.bold,
-                    ),
+                    style: TextStyle(fontSize: 30, fontWeight: FontWeight.bold),
                   ),
                   const SizedBox(height: 8),
                   const Text(
                     'Digite suas informações pessoais',
-                    style: TextStyle(
-                      fontSize: 18,
-                      color: Colors.grey,
-                    ),
+                    style: TextStyle(fontSize: 18, color: Colors.grey),
                   ),
                 ],
               ),
             ),
             const SizedBox(height: 30),
-            _buildTextField('Nome', 'Digite seu nome', (value) => nome = value),
+            _buildTextField('Nome', 'Digite seu nome', (value) => name = value),
             const SizedBox(height: 20),
             _buildTextField('E-mail', 'Digite seu e-mail', (value) => email = value),
             const SizedBox(height: 20),
-            _buildTextField('Senha', 'Digite sua senha', (value) => senha = value, isPassword: true),
+            _buildTextField('Senha', 'Digite sua senha', (value) => password = value, isPassword: true),
             const SizedBox(height: 20),
-            _buildTextField('Confirmar Senha', 'Digite sua senha novamente', (value) => confirmarSenha = value, isPassword: true),
+            _buildTextField('Confirmar Senha', 'Digite sua senha novamente', (value) => confirmPassword = value, isPassword: true),
             const SizedBox(height: 30),
             Center(
               child: isLoading
-                  ? isSuccess
-                      ? const Icon(Icons.check_circle, color: Colors.green, size: 50)
-                      : const CircularProgressIndicator()
+                  ? const CircularProgressIndicator()
                   : SizedBox(
                       width: double.infinity,
                       child: ElevatedButton(
-                        onPressed: registrar,
+                        onPressed: register,
                         style: ElevatedButton.styleFrom(
                           backgroundColor: const Color(0xFFEF6B00),
                           padding: const EdgeInsets.symmetric(vertical: 16),
@@ -160,18 +119,13 @@ class _RegisterScreenState extends State<RegisterScreen> {
       children: [
         Text(
           label,
-          style: const TextStyle(
-            fontSize: 18,
-            fontWeight: FontWeight.w600,
-            color: Colors.black87,
-          ),
+          style: const TextStyle(fontSize: 18, fontWeight: FontWeight.w600, color: Colors.black87),
         ),
         const SizedBox(height: 10),
         TextField(
           onChanged: onChanged,
           decoration: InputDecoration(
             hintText: hint,
-            hintStyle: TextStyle(fontSize: 16, color: Colors.grey.shade600),
             filled: true,
             fillColor: Colors.grey[200],
             contentPadding: const EdgeInsets.symmetric(vertical: 18, horizontal: 20),

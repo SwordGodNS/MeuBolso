@@ -1,6 +1,4 @@
 import 'package:flutter/material.dart';
-import 'package:firebase_auth/firebase_auth.dart';
-import 'package:flutter/gestures.dart';
 
 class LoginScreen extends StatefulWidget {
   const LoginScreen({Key? key}) : super(key: key);
@@ -10,18 +8,22 @@ class LoginScreen extends StatefulWidget {
 }
 
 class _LoginScreenState extends State<LoginScreen> {
-  final _auth = FirebaseAuth.instance;
   String email = '';
   String password = '';
+  bool isLoading = false;
 
-  void login() async {
-    try {
-      await _auth.signInWithEmailAndPassword(email: email, password: password);
-      if (!mounted) return;
-      Navigator.pushReplacementNamed(context, '/home');
-    } catch (e) {
-      print('Erro de login: $e');
-    }
+  Future<void> login() async {
+    setState(() {
+      isLoading = true;
+    });
+
+    await Future.delayed(const Duration(seconds: 2));
+
+    setState(() {
+      isLoading = false;
+    });
+
+    Navigator.pushNamedAndRemoveUntil(context, '/home', (route) => false);
   }
 
   @override
@@ -31,198 +33,98 @@ class _LoginScreenState extends State<LoginScreen> {
         leading: IconButton(
           icon: const Icon(Icons.arrow_back),
           onPressed: () => Navigator.pop(context),
-          color: Colors.black, // Define a cor da seta para preto
+          color: Colors.black,
         ),
-        backgroundColor: Colors.white, // Cor de fundo do AppBar para combinar com a página
-        elevation: 0, // Remove a sombra abaixo do AppBar
+        backgroundColor: Colors.white,
+        elevation: 0,
       ),
-      body: Padding(
-        padding: const EdgeInsets.symmetric(horizontal: 24.0),
+      body: SingleChildScrollView(
+        padding: const EdgeInsets.symmetric(horizontal: 24.0, vertical: 16.0),
         child: Column(
-          crossAxisAlignment: CrossAxisAlignment.center,
-          mainAxisAlignment: MainAxisAlignment.center,
+          crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            Column(
-              children: [
-                CircleAvatar(
-                  radius: 40,
-                  backgroundColor: Colors.grey.shade200,
-                  child: Image.asset(
-                    'assets/images/piggy_bank2_icon.png', // Caminho da imagem personalizada
-                    width: 80,
-                    height: 80,
+            Center(
+              child: Column(
+                children: [
+                  CircleAvatar(
+                    radius: 45,
+                    backgroundColor: Colors.grey.shade200,
+                    child: Image.asset(
+                      'assets/images/piggy_bank2_icon.png',
+                      width: 90,
+                      height: 90,
+                    ),
                   ),
-                ),
-                const SizedBox(height: 16),
-                const Text(
-                  'Login',
-                  style: TextStyle(
-                    fontSize: 28,
-                    fontWeight: FontWeight.bold,
+                  const SizedBox(height: 16),
+                  const Text(
+                    'Login',
+                    style: TextStyle(fontSize: 30, fontWeight: FontWeight.bold),
                   ),
-                ),
-                const SizedBox(height: 8),
-                const Text(
-                  'Faça o login para entrar no aplicativo',
-                  style: TextStyle(
-                    fontSize: 16,
-                    color: Colors.grey,
+                  const SizedBox(height: 8),
+                  const Text(
+                    'Digite suas informações de login',
+                    style: TextStyle(fontSize: 18, color: Colors.grey),
                   ),
-                ),
-              ],
-            ),
-            const SizedBox(height: 40),
-            Align(
-              alignment: Alignment.centerLeft,
-              child: const Text(
-                'E-mail',
-                style: TextStyle(
-                  fontSize: 16,
-                  fontWeight: FontWeight.bold,
-                ),
+                ],
               ),
             ),
-            const SizedBox(height: 8),
-            TextField(
-              onChanged: (value) => email = value,
-              decoration: InputDecoration(
-                hintText: 'Digite seu e-mail',
-                filled: true,
-                fillColor: Colors.grey[200],
-                border: OutlineInputBorder(
-                  borderRadius: BorderRadius.circular(30),
-                  borderSide: BorderSide.none,
-                ),
-              ),
-            ),
+            const SizedBox(height: 30),
+            _buildTextField('E-mail', 'Digite seu e-mail', (value) => email = value),
             const SizedBox(height: 20),
-            Align(
-              alignment: Alignment.centerLeft,
-              child: const Text(
-                'Senha',
-                style: TextStyle(
-                  fontSize: 16,
-                  fontWeight: FontWeight.bold,
-                ),
-              ),
-            ),
-            const SizedBox(height: 8),
-            TextField(
-              onChanged: (value) => password = value,
-              decoration: InputDecoration(
-                hintText: 'Digite sua senha',
-                filled: true,
-                fillColor: Colors.grey[200],
-                border: OutlineInputBorder(
-                  borderRadius: BorderRadius.circular(30),
-                  borderSide: BorderSide.none,
-                ),
-              ),
-              obscureText: true,
-            ),
-            Align(
-              alignment: Alignment.centerRight,
-              child: TextButton(
-                onPressed: () {},
-                child: const Text(
-                  'Esqueceu sua senha?',
-                  style: TextStyle(color: Colors.grey),
-                ),
-              ),
-            ),
-            const SizedBox(height: 20),
-            SizedBox(
-              width: double.infinity,
-              child: ElevatedButton(
-                onPressed: login,
-                style: ElevatedButton.styleFrom(
-                  backgroundColor: Color(0xFFEF6B00),
-                  padding: const EdgeInsets.symmetric(vertical: 14),
-                  shape: RoundedRectangleBorder(
-                    borderRadius: BorderRadius.circular(30),
-                  ),
-                ),
-                child: const Text(
-                  'Login',
-                  style: TextStyle(fontSize: 16),
-                ),
-              ),
-            ),
-            const SizedBox(height: 20),
-            Row(
-              children: const [
-                Expanded(child: Divider()),
-                Padding(
-                  padding: EdgeInsets.symmetric(horizontal: 8.0),
-                  child: Text('Ou faça login com'),
-                ),
-                Expanded(child: Divider()),
-              ],
-            ),
-            const SizedBox(height: 20),
-            Row(
-              mainAxisAlignment: MainAxisAlignment.center,
-              children: [
-                Container(
-                  width: 50,
-                  height: 50,
-                  decoration: BoxDecoration(
-                    color: Colors.white,
-                    shape: BoxShape.circle,
-                    border: Border.all(color: Colors.grey.shade300),
-                  ),
-                  child: IconButton(
-                    onPressed: () {},
-                    icon: const Icon(Icons.g_mobiledata, color: Colors.red),
-                    iconSize: 30,
-                  ),
-                ),
-                const SizedBox(width: 16),
-                Container(
-                  width: 50,
-                  height: 50,
-                  decoration: BoxDecoration(
-                    color: Colors.white,
-                    shape: BoxShape.circle,
-                    border: Border.all(color: Colors.grey.shade300),
-                  ),
-                  child: IconButton(
-                    onPressed: () {},
-                    icon: const Icon(Icons.facebook, color: Colors.blue),
-                    iconSize: 30,
-                  ),
-                ),
-              ],
-            ),
-            const SizedBox(height: 20),
-            Padding(
-              padding: const EdgeInsets.only(bottom: 8.0),
-              child: Center(
-                child: RichText(
-                  textAlign: TextAlign.center,
-                  text: TextSpan(
-                    text: 'Ainda não tem uma conta? ',
-                    style: const TextStyle(color: Colors.black),
-                    children: [
-                      TextSpan(
-                        text: 'Cadastre-se',
-                        style: const TextStyle(
-                          color: Color(0xFFEF6B00),
-                          fontWeight: FontWeight.bold,
+            _buildTextField('Senha', 'Digite sua senha', (value) => password = value, isPassword: true),
+            const SizedBox(height: 30),
+            Center(
+              child: isLoading
+                  ? const CircularProgressIndicator()
+                  : SizedBox(
+                      width: double.infinity,
+                      child: ElevatedButton(
+                        onPressed: login,
+                        style: ElevatedButton.styleFrom(
+                          backgroundColor: const Color(0xFFEF6B00),
+                          padding: const EdgeInsets.symmetric(vertical: 16),
+                          shape: RoundedRectangleBorder(
+                            borderRadius: BorderRadius.circular(30),
+                          ),
                         ),
-                        recognizer: TapGestureRecognizer()
-                          ..onTap = () {
-                            Navigator.pushNamed(context, '/register');
-                          },
+                        child: const Text(
+                          'Entrar',
+                          style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
+                        ),
                       ),
-                    ],
-                  ),
-                ),
-              ),
+                    ),
             ),
           ],
         ),
       ),
+    );
+  }
+
+  Widget _buildTextField(String label, String hint, Function(String) onChanged, {bool isPassword = false}) {
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        Text(
+          label,
+          style: const TextStyle(fontSize: 18, fontWeight: FontWeight.w600, color: Colors.black87),
+        ),
+        const SizedBox(height: 10),
+        TextField(
+          onChanged: onChanged,
+          decoration: InputDecoration(
+            hintText: hint,
+            filled: true,
+            fillColor: Colors.grey[200],
+            contentPadding: const EdgeInsets.symmetric(vertical: 18, horizontal: 20),
+            border: OutlineInputBorder(
+              borderRadius: BorderRadius.circular(30),
+              borderSide: BorderSide.none,
+            ),
+          ),
+          obscureText: isPassword,
+          style: const TextStyle(fontSize: 18),
+        ),
+      ],
     );
   }
 }

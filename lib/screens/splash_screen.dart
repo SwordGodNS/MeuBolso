@@ -16,27 +16,26 @@ class _SplashScreenState extends State<SplashScreen>
   void initState() {
     super.initState();
 
-    // Configuração do AnimationController
     _controller = AnimationController(
       duration: const Duration(seconds: 2),
       vsync: this,
-    )..forward(); // Inicia a animação
+    )..forward();
 
     _animation = Tween<double>(begin: 0.8, end: 1.2).animate(
       CurvedAnimation(parent: _controller, curve: Curves.easeInOut),
     );
 
-    // Delay para navegar para a tela de introdução
+   
     Future.delayed(const Duration(seconds: 3), () {
       if (mounted) {
-        Navigator.pushReplacementNamed(context, '/intro'); // Redireciona para a IntroScreen
+        Navigator.pushReplacementNamed(context, '/intro');
       }
     });
   }
 
   @override
   void dispose() {
-    _controller.dispose(); // Libera o controlador ao sair
+    _controller.dispose();
     super.dispose();
   }
 

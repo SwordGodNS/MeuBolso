@@ -6,25 +6,24 @@ class IntroScreen extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+      resizeToAvoidBottomInset: true,
       backgroundColor: Colors.white,
-      body: Padding(
+      body: SingleChildScrollView( 
         padding: const EdgeInsets.symmetric(horizontal: 24.0),
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
             const SizedBox(height: 80),
 
-            // Imagem de introdução principal
             Center(
               child: Image.asset(
-                'assets/images/intro_image.png', // Caminho da imagem de introdução
+                'assets/images/intro_image.png', 
                 height: 250,
                 fit: BoxFit.contain,
               ),
             ),
             const SizedBox(height: 32),
 
-            // Logo do porquinho e nome do app
             Row(
               crossAxisAlignment: CrossAxisAlignment.center,
               children: [
@@ -66,7 +65,6 @@ class IntroScreen extends StatelessWidget {
 
             const SizedBox(height: 0),
 
-            // Texto de introdução
             const Text(
               'Controle seu dinheiro de forma fácil e inteligente',
               style: TextStyle(
@@ -86,9 +84,8 @@ class IntroScreen extends StatelessWidget {
               ),
             ),
 
-            const Spacer(),
+            const SizedBox(height: 24),
 
-            // Botão de Login
             SizedBox(
               width: double.infinity,
               child: ElevatedButton(
@@ -114,7 +111,6 @@ class IntroScreen extends StatelessWidget {
             ),
             const SizedBox(height: 16),
 
-            // Botão de Registro
             SizedBox(
               width: double.infinity,
               child: OutlinedButton(
